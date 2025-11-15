@@ -38,3 +38,19 @@ TEST(UtilsExcludedTest, ExcludedExtensions) {
 
     EXPECT_FALSE(std::filesystem::exists(tempFile));
 }
+
+TEST(UtilsIncludeTest, OnlyIncludedExtensions) {
+    auto tempFile = std::filesystem::temp_directory_path() / "include_test.cpp";
+    {
+        std::ofstream temp(tempFile);
+        temp << "int main() { return 0; }\n";
+    }
+
+    EXPECT_TRUE(onlyIncludedExtensions(tempFile.string(), "*.cpp"));
+    EXPECT_TRUE(onlyIncludedExtensions(tempFile.string(), "*.hpp, *.cpp"));
+    EXPECT_TRUE(onlyIncludedExtensions(tempFile.string(), "  *.cpp  "));
+    EXPECT_FALSE(onlyIncludedExtensions(tempFile.string(), "*.py, *.md"));
+    EXPECT_TRUE(onlyIncludedExtensions(tempFile.string(), ""));
+
+    std::filesystem::remove(tempFile);
+}
