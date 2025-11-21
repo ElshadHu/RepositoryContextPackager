@@ -77,4 +77,5 @@ add_custom_command(TARGET repoctx POST_BUILD
 
 add_subdirectory(tests)
 
-install(TARGETS repoctx RUNTIME DESTINATION bin)
+# install(TARGETS repoctx RUNTIME DESTINATION bin)
+install(TARGETS repoctx DESTINATION bin)
