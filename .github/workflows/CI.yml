@@ -29,13 +29,21 @@ jobs:
       run: |
         brew install cmake libgit2 pkg-config
     
-    - name: Install dependencies (Windows)
+    - name: Setup vcpkg (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install cmake libgit2
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+        .\vcpkg install libgit2:x64-windows
     
-    - name: Configure CMake
+    - name: Configure CMake (Linux/macOS)
+      if: runner.os != 'Windows'
       run: cmake -B build
+    
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
     
     - name: Build
       run: cmake --build build --config Release
